@@ -5,7 +5,6 @@ import re
 
 #
 # TODO:
-# Move it to separate folder, with virtual env and push it to remote repo
 # scrape list of players and their ids, find a way to save it sensibly
 #
 
@@ -24,6 +23,9 @@ list_of_kills = [int(re.match(k_regex, element.text.strip()).group()) for elemen
 
 below_threshold = [n for n in list_of_kills if n < kill_threshold]
 # get the percentage of matches below given threshold
-percentage = (len(below_threshold) / len(list_of_kills)) * 100
+below_percentage = (len(below_threshold) / len(list_of_kills)) * 100
+above_percentage = 100 - below_percentage
 
-print("{0:.2f}%".format(percentage))
+print("Below threshold: {0:.2f}%".format(below_percentage))
+print("Above threshold: {0:.2f}%".format(above_percentage))
+# print("{}/{}".format(len(below_threshold), len(list_of_kills)))
