@@ -8,16 +8,29 @@ import json
 
 #
 # TODO:
-# make it so you can type the name and threshold instead of id
 # type team name and get thresholds for team members
 # clean this bloody mess up, considering creating a method which
 # learn about tests
 #
 
-# f = open("player_id_names.json")
-# player_ids = json.load(f)
+player_id = ""#argv[1]
+f = open("player_id_names.json")
+player_ids = json.load(f)
+#
+# Regex strings
+#
+k_regex = '^[0-9]{1,2}'
+input_id_regex = '^[0-9]{2,5}'
 
-player_id = argv[1]
+#
+# If the input matches the id regex, set variable to id
+# otherwise, find the name by id key inside players_ids dictionary
+#
+if re.match(input_id_regex, argv[1]):
+	player_id = argv[1]
+else:
+	player_id = player_ids[argv[1]]
+
 date_today = date.today()
 date_three_months_ago = date_today - relativedelta(months=3) # (today - 3 months)
 #
@@ -27,11 +40,6 @@ kill_threshold = float(argv[2])
 list_of_kills = []
 url = "https://www.hltv.org/stats/players/matches/{}/x?startDate={}&endDate={}".format(player_id, str(date_three_months_ago), str(date_today))
 
-#
-# Regex string
-#
-k_regex = '^[0-9]{1,2}'
-
 source = requests.get(url)
 parser = BeautifulSoup(source.text, "html.parser")
 
@@ -40,8 +48,6 @@ parser = BeautifulSoup(source.text, "html.parser")
 #
 list_of_kills = parser.find_all('td', class_="statsCenterText")
 list_of_kills = [int(re.match(k_regex, element.text.strip()).group()) for element in list_of_kills]
-
-
 player_name = parser.find('span', class_="standard-headline")
 player_name = player_name.text.split(' ')[-1] # this probably can be done better
 
