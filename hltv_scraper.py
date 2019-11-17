@@ -6,13 +6,12 @@ import requests
 import re
 import json
 
-
-# TODO:
-# clean this bloody mess up, considering creating a method which
-# finds out what date is it today so we can put it in the url start and end date string
 #
+# TODO:
 # make it so you can type the name and threshold instead of id
 # type team name and get thresholds for team members
+# clean this bloody mess up, considering creating a method which
+# learn about tests
 #
 
 # f = open("player_id_names.json")
@@ -20,19 +19,18 @@ import json
 
 player_id = argv[1]
 date_today = date.today()
-date_three_months_ago = date_today - relativedelta(months=3)
-# print(type(str(date_today)))
-# print(date_three_months_ago)
-
+date_three_months_ago = date_today - relativedelta(months=3) # (today - 3 months)
+#
 # if player name exists, assign id
-
+#
 kill_threshold = float(argv[2])
 list_of_kills = []
 url = "https://www.hltv.org/stats/players/matches/{}/x?startDate={}&endDate={}".format(player_id, str(date_three_months_ago), str(date_today))
-print(url)
 
+#
+# Regex string
+#
 k_regex = '^[0-9]{1,2}'
-time_frame_filter_regex = 'startDate.*[0-9]{2}'
 
 source = requests.get(url)
 parser = BeautifulSoup(source.text, "html.parser")
@@ -42,20 +40,7 @@ parser = BeautifulSoup(source.text, "html.parser")
 #
 list_of_kills = parser.find_all('td', class_="statsCenterText")
 list_of_kills = [int(re.match(k_regex, element.text.strip()).group()) for element in list_of_kills]
-time_filter_date = parser.select('select > option')
 
-for node in time_filter_date:
-	if node.text == "Last 3 months":
-		time_filter_date = str(node['data-link'])
-		# print(str(node['data-link']))
-		break
-
-#
-# startDate=2019-08-15&endDate=2019-11-15 format
-#
-# time_filter_date = str(time_filter_date)
-time_filter_date = re.search(time_frame_filter_regex, time_filter_date).group()
-# print(time_filter_date)
 
 player_name = parser.find('span', class_="standard-headline")
 player_name = player_name.text.split(' ')[-1] # this probably can be done better
