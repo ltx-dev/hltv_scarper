@@ -10,7 +10,6 @@ import json
 # TODO:
 # type team name and get thresholds for team members
 # clean this bloody mess up, considering creating a method which
-# learn about tests
 #
 
 player_id = ""#argv[1]
